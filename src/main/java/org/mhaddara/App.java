@@ -8,7 +8,10 @@ import java.util.List;
 import org.mhaddara.solutions.*;
 
 public class App {
-    static List<Solution> solutions = List.of();
+    // todo: populate this via reflection?
+    static List<Solution> solutions = List.of(
+        new Day01()
+    );
 
     public static void main( String[] args ) throws IOException {
         // args: day, part, test or real
@@ -20,8 +23,6 @@ public class App {
 
         List<String> lines = testMode ? solution.testInput().lines().toList() : getInput(dayNum);
 
-        System.out.println(lines);
-        
         String result = switch (part) {
             case "A" -> solution.solvePartOne(lines);
             case "B" -> solution.solvePartTwo(lines);
