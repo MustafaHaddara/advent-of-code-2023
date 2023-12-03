@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface Solution {
     public String testInput();
-    public String solvePartOne(List<String> input);
-    public String solvePartTwo(List<String> input);
+    public Object solvePartOne(List<String> input);
+    public Object solvePartTwo(List<String> input);
 }

@@ -24,7 +24,7 @@ public class App {
 
         List<String> lines = testMode ? solution.testInput().lines().toList() : getInput(dayNum);
 
-        String result = switch (part) {
+        Object result = switch (part) {
             case "A" -> solution.solvePartOne(lines);
             case "B" -> solution.solvePartTwo(lines);
             default -> "Invalid part";
