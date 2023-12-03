@@ -10,7 +10,8 @@ import org.mhaddara.solutions.*;
 public class App {
     // todo: populate this via reflection?
     static List<Solution> solutions = List.of(
-        new Day01()
+        new Day01(),
+        new Day02()
     );
 
     public static void main( String[] args ) throws IOException {
