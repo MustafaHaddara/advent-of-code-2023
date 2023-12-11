@@ -18,7 +18,8 @@ public class App {
         new Day06(),
         new Day07(),
         new Day08(),
-        new Day09()
+        new Day09(),
+        new Day10()
     );
 
     public static void main( String[] args ) throws IOException {
