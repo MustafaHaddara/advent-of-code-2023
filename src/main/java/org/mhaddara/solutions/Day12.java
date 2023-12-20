@@ -1,7 +1,9 @@
 package org.mhaddara.solutions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.mhaddara.Solution;
@@ -94,7 +96,7 @@ public class Day12 implements Solution {
             String[] chunks = line.split(" ");
             String spec = chunks[0];
             String checksum = chunks[1];
-
+            
             totalCombos += findNumCombos(spec, checksum);
         }
 
@@ -107,15 +109,94 @@ public class Day12 implements Solution {
 
     @Override
     public Object solvePartTwo(List<String> input) {
+        Map<String, Long> cache = new HashMap<>();
         long totalCombos = 0;
         for (String line : input) {
             String[] chunks = line.split(" ");
-            String spec = repeat(chunks[0], "#");
-            String checksum = repeat(chunks[1], ",");
+            String spec = repeat(chunks[0], "?");
+            List<Integer> checksum = Stream.of(repeat(chunks[1], ",").split(",")).map(Integer::parseInt).toList();
 
-            totalCombos += findNumCombos(spec, checksum);
+            long res = numWaysToFit(spec, checksum, cache);
+            totalCombos += res;
+
+            if (res == 0) {
+                System.out.printf("Counted %s for %s, current total is %s\n", res, spec, totalCombos);
+            }
         }
 
         return totalCombos;
+    }
+
+    private long numWaysToFit(String spec, List<Integer> groups, Map<String, Long> cache) {
+        String key = makeKey(spec, groups);
+        if (cache.containsKey(key)) {
+            return cache.get(key);
+        }
+
+        long res = numWaysToFitInner(spec, groups, cache);
+        cache.put(key, res);
+        return res;
+    }
+
+    private long numWaysToFitInner(String spec, List<Integer> groups, Map<String, Long> cache) {
+        if (groups.size() == 0) {
+            if (!spec.contains("#")) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        if (spec.chars().allMatch(c -> c == '.')) {
+            return 0;
+        }
+
+        int group = groups.get(0);
+
+        if (group > spec.length()) {
+            // no way for group to fit in here
+            return 0;
+        }
+
+        long res = 0;
+        int startIdx = 0;
+        while (startIdx < spec.length()) {
+            String chunk = spec.substring(startIdx);
+
+            if (canFit(chunk, group)) {
+                String nextChunk = spec.substring(Math.min(startIdx + group + 1, spec.length()));
+                res += numWaysToFit(nextChunk, groups.subList(1, groups.size()), cache);
+            }
+
+            if (spec.charAt(startIdx) == '#') {
+                // not allowed to iterate forward
+                break;
+            }
+
+            startIdx++;
+        }
+
+        return res;
+    }
+
+    private String makeKey(String spec, List<Integer> groups) {
+        return groups.toString() + spec;
+    }
+
+    private boolean canFit(String spec, Integer size) {
+        if (size > spec.length()) {
+            return false;
+        }
+
+        int i = 0;
+        while (i < size) {
+            if (spec.charAt(i) == '.') {
+                return false;
+            }
+            i++;
+        }
+        
+        // ends at the end of the string or with a . or ?
+        return (i == spec.length() || spec.charAt(i) != '#');
     }
 }
